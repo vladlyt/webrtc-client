@@ -1,5 +1,8 @@
 from flask import Flask, render_template
+import os
 
+
+PORT = os.environ.get('PORT', 5000)
 app = Flask(__name__)
 
 
@@ -9,4 +12,4 @@ def home():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=PORT)
