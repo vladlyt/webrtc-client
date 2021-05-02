@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'main.css') }}">
     <title>MeetEnjoy</title>
 </head>
 
@@ -17,9 +17,9 @@
 <br/>
 <div id="connections"></div>
 
-<script src="socket.io/socket.io.js"></script>
-<script src="config.js"></script>
-<script src="webrtc.js"></script>
+<script src="{{ url_for('static', filename = 'socket.io/socket.io.js') }}"></script>
+<script src="{{ url_for('static', filename = 'config.js') }}"></script>
+<script src="{{ url_for('static', filename = 'webrtc.js') }}"></script>
 
 <script type="text/javascript">
     pageReady();
