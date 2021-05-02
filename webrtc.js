@@ -19,7 +19,7 @@ function pageReady() {
 
     var constraints = {
         video: true,
-        audio: false,
+        audio: true,
     };
 
     if (navigator.mediaDevices.getUserMedia) {
@@ -28,7 +28,7 @@ function pageReady() {
             .then(function () {
 
                 socket = io.connect(config.host, {secure: true});
-                console.log("LEL", config.host);
+                console.log("Using host to connect: ", config.host);
                 socket.on('signal', gotMessageFromServer);
 
                 socket.on('connect', function () {
@@ -97,7 +97,7 @@ function gotRemoteStream(event, id) {
     video.setAttribute('data-socket', id);
     video.srcObject = event.stream;
     video.autoplay = true;
-    video.muted = false;
+    video.muted = true;
     video.playsinline = true;
 
     div.appendChild(video);
@@ -110,11 +110,11 @@ function gotMessageFromServer(fromId, message) {
     var signal = JSON.parse(message)
 
     //Make sure it's not coming from yourself
-    if (fromId != socketId) {
+    if (fromId !== socketId) {
 
         if (signal.sdp) {
             connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(function () {
-                if (signal.sdp.type == 'offer') {
+                if (signal.sdp.type === 'offer') {
                     connections[fromId].createAnswer().then(function (description) {
                         connections[fromId].setLocalDescription(description).then(function () {
                             socket.emit('signal', fromId, JSON.stringify({'sdp': connections[fromId].localDescription}));
