@@ -26,11 +26,10 @@ function pageReady() {
         navigator.mediaDevices.getUserMedia(constraints)
             .then(getUserMediaSuccess)
             .then(function () {
-
-                socket = io.connect(config.host, {secure: true});
                 console.log("Using host to connect: ", config.host);
-                socket.on('signal', gotMessageFromServer);
+                socket = io.connect(config.host, {secure: true});
 
+                socket.on('signal', gotMessageFromServer);
                 socket.on('connect', function () {
 
                     socketId = socket.id;
@@ -46,7 +45,7 @@ function pageReady() {
                         clients.forEach(function (socketListId) {
                             if (!connections[socketListId]) {
                                 connections[socketListId] = new RTCPeerConnection(peerConnectionConfig);
-                                //Wait for their ice candidate       
+                                //Wait for their ice candidate
                                 connections[socketListId].onicecandidate = function () {
                                     if (event.candidate != null) {
                                         console.log('SENDING ICE');
@@ -97,7 +96,7 @@ function gotRemoteStream(event, id) {
     video.setAttribute('data-socket', id);
     video.srcObject = event.stream;
     video.autoplay = true;
-    video.muted = true;
+    video.muted = false;
     video.playsinline = true;
 
     div.appendChild(video);
@@ -107,11 +106,10 @@ function gotRemoteStream(event, id) {
 function gotMessageFromServer(fromId, message) {
 
     //Parse the incoming signal
-    var signal = JSON.parse(message)
+    const signal = JSON.parse(message);
 
     //Make sure it's not coming from yourself
     if (fromId !== socketId) {
-
         if (signal.sdp) {
             connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(function () {
                 if (signal.sdp.type === 'offer') {
