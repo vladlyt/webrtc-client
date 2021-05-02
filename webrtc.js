@@ -97,7 +97,7 @@ function gotRemoteStream(event, id) {
     video.setAttribute('data-socket', id);
     video.srcObject = event.stream;
     video.autoplay = true;
-    video.muted = true;
+    video.muted = false;
     video.playsinline = true;
 
     div.appendChild(video);
