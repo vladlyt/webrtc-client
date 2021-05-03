@@ -14,6 +14,11 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/<string:room_id>/')
+def room(room_id: str):
+    return render_template('room.html', room_id=room_id)
+
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(

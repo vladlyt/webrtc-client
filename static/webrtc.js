@@ -4,7 +4,7 @@ var socketCount = 0;
 var socketId;
 var localStream;
 var connections = [];
-
+// TODO refactor the code
 var peerConnectionConfig = {
     'iceServers': [
         {'urls': 'stun:stun.services.mozilla.com'},
@@ -12,10 +12,40 @@ var peerConnectionConfig = {
     ]
 };
 
+
 function pageReady() {
 
     localVideo = document.getElementById('localVideo');
     remoteVideo = document.getElementById('remoteVideo');
+    roomId = document.getElementById('room-id').getAttribute('data-value');
+
+    // TODO add UI that will add green/red colors to the buttons
+
+    let mic_switch = true;
+    let video_switch = true;
+
+    function toggleVideo() {
+        if (localStream != null && localStream.getVideoTracks().length > 0) {
+            video_switch = !video_switch;
+            localStream.getVideoTracks()[0].enabled = video_switch;
+        }
+
+    }
+
+    function toggleMic() {
+        if (localStream != null && localStream.getAudioTracks().length > 0) {
+            mic_switch = !mic_switch;
+            console.log("KEK", mic_switch)
+            localStream.getAudioTracks()[0].enabled = mic_switch;
+        }
+    }
+
+    const videoBtn = document.querySelector("#video-btn");
+    const audioBtn = document.querySelector("#audio-btn");
+
+    videoBtn.addEventListener('click', toggleVideo);
+    audioBtn.addEventListener('click', toggleMic);
+
 
     var constraints = {
         video: true,
@@ -27,7 +57,7 @@ function pageReady() {
             .then(getUserMediaSuccess)
             .then(function () {
                 console.log("Using host to connect: ", config.host);
-                socket = io.connect(config.host, {secure: true});
+                socket = io.connect(config.host + "?room=" + roomId, {secure: true});
 
                 socket.on('signal', gotMessageFromServer);
                 socket.on('connect', function () {

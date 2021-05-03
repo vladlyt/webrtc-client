@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename = 'main.css') }}">
     <title>MeetEnjoy</title>
 </head>
-{# TODO this should be index html to connect to the room? Or just remove it #}
+
 <body>
 <div class="videos">
     <div>
@@ -20,6 +20,7 @@
 
 <br/>
 <div id="connections"></div>
+<div id="room-id" data-value="{{ room_id }}" hidden></div>
 
 <script src="{{ url_for('static', filename = 'socket.io/socket.io.js') }}"></script>
 <script src="{{ url_for('static', filename = 'config.js') }}"></script>
