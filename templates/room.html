@@ -13,6 +13,7 @@
         <div>
             <button id="video-btn">Toggle video</button>
             <button id="audio-btn">Toggle audio</button>
+            <b>{{ name }}</b>
         </div>
         <div class="soundbar"><span class="currentVolume"></span></div>
     </div>
@@ -21,6 +22,7 @@
 <br/>
 <div id="connections"></div>
 <div id="room-id" data-value="{{ room_id }}" hidden></div>
+<div id="my-name" data-value="{{ name }}" hidden></div>
 
 <script src="{{ url_for('static', filename = 'socket.io/socket.io.js') }}"></script>
 <script src="{{ url_for('static', filename = 'config.js') }}"></script>

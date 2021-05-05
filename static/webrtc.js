@@ -18,6 +18,7 @@ function pageReady() {
     localVideo = document.getElementById('localVideo');
     remoteVideo = document.getElementById('remoteVideo');
     roomId = document.getElementById('room-id').getAttribute('data-value');
+    myName = document.getElementById('my-name').getAttribute('data-value');
 
     // TODO add UI that will add green/red colors to the buttons
 
@@ -35,7 +36,7 @@ function pageReady() {
     function toggleMic() {
         if (localStream != null && localStream.getAudioTracks().length > 0) {
             mic_switch = !mic_switch;
-            console.log("KEK", mic_switch)
+            console.log("MIC IS ", mic_switch)
             localStream.getAudioTracks()[0].enabled = mic_switch;
         }
     }
@@ -57,7 +58,7 @@ function pageReady() {
             .then(getUserMediaSuccess)
             .then(function () {
                 console.log("Using host to connect: ", config.host);
-                socket = io.connect(config.host + "?room=" + roomId, {secure: true});
+                socket = io.connect(config.host + "?room=" + roomId + "&name=" + myName, {secure: true});
 
                 socket.on('signal', gotMessageFromServer);
                 socket.on('connect', function () {
@@ -70,9 +71,8 @@ function pageReady() {
                         video.parentElement.parentElement.removeChild(parentDiv);
                     });
 
-
-                    socket.on('user-joined', function (id, count, clients) {
-                        clients.forEach(function (socketListId) {
+                    socket.on('user-joined', function (id, count, clients, clientNicknames) {
+                        clients.forEach(function (socketListId, index) {
                             if (!connections[socketListId]) {
                                 connections[socketListId] = new RTCPeerConnection(peerConnectionConfig);
                                 //Wait for their ice candidate
@@ -85,7 +85,7 @@ function pageReady() {
 
                                 //Wait for their video stream
                                 connections[socketListId].onaddstream = function () {
-                                    gotRemoteStream(event, socketListId)
+                                    gotRemoteStream(event, socketListId, clientNicknames[index])
                                 }
 
                                 //Add the local video stream
@@ -117,11 +117,12 @@ function getUserMediaSuccess(stream) {
     localVideo.srcObject = stream;
 }
 
-function gotRemoteStream(event, id) {
+function gotRemoteStream(event, id, nickname) {
 
     var videos = document.querySelectorAll('video'),
         video = document.createElement('video'),
         div = document.createElement('div')
+        nicknameElement = document.createElement('b')
 
     video.setAttribute('data-socket', id);
     video.srcObject = event.stream;
@@ -129,7 +130,10 @@ function gotRemoteStream(event, id) {
     video.muted = false;
     video.playsinline = true;
 
+    nicknameElement.textContent = nickname;
+
     div.appendChild(video);
+    div.appendChild(nicknameElement);
     document.querySelector('.videos').appendChild(div);
 }
 

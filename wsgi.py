@@ -1,13 +1,9 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 import os
 
 PORT = os.environ.get('PORT', 5000)
 app = Flask(__name__)
 
-
-# TODO add possibility to mute/stop video
-# TODO add rooms per uuid
-# TODO show name of the user?
 
 @app.route('/')
 def home():
@@ -16,7 +12,7 @@ def home():
 
 @app.route('/<string:room_id>/')
 def room(room_id: str):
-    return render_template('room.html', room_id=room_id)
+    return render_template('room.html', room_id=room_id, name=request.args.get('name') or 'Incognito')
 
 
 @app.route('/favicon.ico')
